@@ -1,11 +1,11 @@
 {
-  "name": "react-employees",
+  "name": "order_database",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www",
-    "client": "npm start --prefix client",
+    "client": "npm run dev --prefix client",
     "dev": "concurrently \"npx prisma studio \" \"npm run server \" \"npm run client\""
   },
   "dependencies": {
