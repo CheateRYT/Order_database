@@ -11,8 +11,10 @@ getOrder,
     getNotifications,
     getNotificationsUpdates,
     getNotificationsNew,
-    getNotificationsCompleted
+    getNotificationsCompleted,
+    getMyOrders
 } = require("./controllers/orders");
+
 router.get("/notifications/completed", auth, getNotificationsCompleted)
 router.get("/notifications/updates", auth, getNotificationsUpdates)
 router.get("/notifications/new", auth, getNotificationsNew)
@@ -21,5 +23,6 @@ router.get("/:id", auth, getOrder);
 router.post("/add", auth, addOrder);
 router.put("/update/:id", auth, executorCheck, updateOrder);
 router.get("/", auth, getOrders);
+router.get("/myOrders", auth, getMyOrders)
 
 module.exports = router;
