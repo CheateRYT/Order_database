@@ -1,0 +1,7 @@
+в терминале (cmd/powershell)
+
+" npm run dev " без кавычек
+
+
+" npm i " без кавычек
+ в каждой папке client и server для подгрузки зависимостей node_modules если удалены. Если папка node_modules есть то прописывать npm i не нужно
