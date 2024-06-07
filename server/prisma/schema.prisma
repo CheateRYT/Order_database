@@ -12,16 +12,16 @@ model User {
   login          String
   password       String
   name           String
-  role           String // User, employee, executor
+  role           String // User, executor
   createdOrders  Order[] @relation("ClientOrders")
   assignedOrders Order[] @relation("ExecutorOrders")
 }
 
 model Order {
-  id                 Int      @id @default(autoincrement())
-  client             User     @relation("ClientOrders", fields: [clientId], references: [id])
+  id                 Int            @id @default(autoincrement())
+  client             User           @relation("ClientOrders", fields: [clientId], references: [id])
   clientId           Int
-  executor           User?    @relation("ExecutorOrders", fields: [executorId], references: [id])
+  executor           User?          @relation("ExecutorOrders", fields: [executorId], references: [id])
   executorId         Int?
   dateAdded          DateTime
   equipment          String
@@ -29,7 +29,20 @@ model Order {
   problemDescription String
   executorComment    String?
   status             String
+  notification       Notification[]
 
   @@index([clientId], name: "client_index")
   @@index([executorId], name: "executor_index")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  type      String
+  message   String
+  createdAt DateTime
+
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@index([orderId], name: "order_index")
 }
