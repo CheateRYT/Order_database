@@ -13,7 +13,6 @@ const Register = () => {
 
     const handleRegisterBtn = async () => {
         setLoading(true);
-
         const login = loginRef.current!.value;
         const password = passwordRef.current!.value;
         const name = nameRef.current!.value;
@@ -27,7 +26,6 @@ const Register = () => {
                 name,
                 role
             });
-
             if (response.status === 201) {
                 const data = await response.data;
                 Cookies.set('token', await data.token);
@@ -37,7 +35,7 @@ const Register = () => {
                 console.error(response.data.message);
             }
         } catch (error) {
-            console.error("An error occurred while processing your request", error);
+            console.error("Произошла ошибка при обработке вашего запроса", error);
         } finally {
             setLoading(false);
         }
@@ -55,7 +53,7 @@ const Register = () => {
                 <option value="executor">Исполнитель</option>
             </select>
             {loading ? (
-                <p>Loading...</p>
+                <p>Загрузка...</p>
             ) : (
                 <button onClick={handleRegisterBtn} className="btn btn-primary">Зарегистрироваться</button>
             )}

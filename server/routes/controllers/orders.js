@@ -21,8 +21,8 @@ const addOrder = async (req, res) => {
     await prisma.notification.create({
       data: {
         orderId: order.id,
-        type: "NewOrder",
-        message: "New order created",
+        type: "Новая заявка",
+        message: `Заявка была создана с полями: Оборудование - ${equipment}, Тип неисправности - ${faultType}, Описание проблемы - ${problemDescription}, ID клиента - ${req.user.id}`,
         createdAt: new Date(),
       },
     });
@@ -30,41 +30,46 @@ const addOrder = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "An error occurred while processing your request "+ error });
   }
-};
-const updateOrder = async (req, res) => {
+};const updateOrder = async (req, res) => {
   try {
     const orderId = parseInt(req.params.id);
     const { status, executorComment, executorId } = req.body;
+
+    const parsedExecutorId = executorId ? parseInt(executorId) : req.user.id;
+    const date = new Date()
     const order = await prisma.order.update({
       where: {
         id: orderId,
       },
       data: {
         status,
-        executorId,
+        executorId: parsedExecutorId,
         executorComment,
-        ...(status === "выполнено" ? { dateCompleted: new Date() } : {}),
-        ...(status === "в работе" ? { dateAccepted: new Date() } : {}),
+        ...(status === "выполнено" ? { dateCompleted: date } : {}),
+        ...(status === "в работе" ? { dateAccepted: date } : {}),
       },
     });
+
     if (status === "выполнено") {
       await prisma.notification.create({
         data: {
           orderId: order.id,
-          type: "CompletedOrder",
-          message: "Order completed",
-          createdAt: new Date(),
+          type: "Выполненная заявка",
+          message: `Заявка была отмечена как выполненная в ${date}`,
+          createdAt: date,
         },
       });
     }
+
     await prisma.notification.create({
       data: {
         orderId: order.id,
-        type: "UpdateOrder",
-        message: "Order updated",
+        type: "Обновление заявки",
+        message: `Заявка обновлена данными: Статус - ${status}. ${executorComment ? "Комментарий исполнителя " + executorComment : ""}`,
         createdAt: new Date(),
       },
     });
+
     res.status(200).json(order);
   } catch (error) {
     res.status(500).json({ message: "An error occurred while processing your request" + error });
@@ -80,7 +85,6 @@ const getOrders = async (req, res) => {
   }
 };
 
-
 const getMyOrders = async (req, res) => {
   try {
     const orders = await prisma.order.findMany({
@@ -88,12 +92,13 @@ const getMyOrders = async (req, res) => {
         clientId: req.user.id,
       },
     });
-    if (!orders) {
+    if (!orders.length) {
       return res.status(404).json({ message: "Order not found" });
     }
     res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ message: "An error occurred while fetching the order" });
+
+    res.status(500).json({ message: `An error occurred while fetching the order ${error.message}` });
   }
 };
 
@@ -111,7 +116,7 @@ const getOrder = async (req, res) => {
     }
     res.status(200).json(order);
   } catch (error) {
-    res.status(500).json({ message: "An error occurred while fetching the order" });
+    res.status(500).json({ message: "An error occurred while fetchingg the order" });
   }
 };
 const getNotifications = async (req, res) => {
@@ -127,7 +132,7 @@ const getNotificationsNew = async (req, res) => {
   try {
     const notifications = await prisma.notification.findMany(
         {where: {
-                type: "NewOrder"
+                type: "Новая заявка"
             }}
     )
     res.status(200).json(notifications);
@@ -148,7 +153,7 @@ const getNotificationsUpdates = async (req, res) => {
     const notifications = await prisma.notification.findMany({
       where: {
         orderId: { in: clientOrderIds },
-        type: "UpdateOrder"
+        type: "Обновление заявки"
       }
     });
 
@@ -171,7 +176,7 @@ const getNotificationsCompleted = async (req, res) => {
     const notifications = await prisma.notification.findMany({
       where: {
         orderId: { in: clientOrderIds },
-        type: "CompletedOrder"
+        type: "Выполненная заявка"
       }
     });
 
@@ -247,11 +252,11 @@ module.exports = {
   updateOrder,
   getOrders,
   getOrder,
-  getMyOrders,
   getNotifications,
   getNotificationsNew,
   getNotificationsUpdates,
   getNotificationsCompleted,
   getInfoAboutExecutors,
-  getMyOrder
+  getMyOrder,
+  getMyOrders,
 };

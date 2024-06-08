@@ -8,12 +8,11 @@ const Login = () => {
     const loginRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
-
     const handleLoginBtn = async () => {
         setLoading(true);
         const login = loginRef.current!.value;
         const password = passwordRef.current!.value;
-        if (!login || !password) return alert("Заполните все поля!");
+        if (!login || !password) return alert("Заполните все поля");
         try {
             const response = await axios.post('http://localhost:8000/api/user/login', {
                 login,
@@ -22,7 +21,8 @@ const Login = () => {
             if (response.status === 200) {
                 const data = response.data;
                 Cookies.set('token', data.token);
-                alert("Успешно авторизированы!");
+
+
                 navigate("/main");
             } else {
                 console.error(response.data.message);
@@ -38,14 +38,13 @@ const Login = () => {
         <div className="container text-center mt-5">
             <h1>Войти</h1>
             <input ref={loginRef} type="text" className="form-control" placeholder="Логин" />
-            <input ref={passwordRef} type="text" className="form-control" placeholder="Пароль" />
-
+            <input ref={passwordRef} type="password" className="form-control" placeholder="Пароль" />
             {loading ? (
-                <p>Loading...</p>
+                <p>Загрузка...</p>
             ) : (
                 <button onClick={handleLoginBtn} className="btn btn-primary">Войти</button>
             )}
-            <a onClick={() => navigate("/register")} className="link-danger pointer-event link-offset-2-hover">Нету аккаунта? Зарегистрироваться</a>
+            <a onClick={() => navigate("/register")} className="link-danger pointer-event link-offset-2-hover">Не имеете аккаунта? Зарегистрироваться</a>
         </div>
     );
 };

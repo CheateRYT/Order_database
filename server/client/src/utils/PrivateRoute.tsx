@@ -1,32 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { tokenStore } from "../store/tokenStore.tsx";
+import axios from 'axios';
+import {userStore} from "../store/userStore.ts";
 
 const PrivateRouter = ({ Page }: { Page: React.ComponentType }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const getTokenFromCookies = () => {
-            const tokenFromCookies = Cookies.get('token');
-            if (tokenFromCookies) {
-                tokenStore.setState({ token: tokenFromCookies });
-                setLoading(false);
-            } else {
+        const getUserFromServer = async () => {
+            try {
+                const token = Cookies.get('token');
+                if (token) {
+                    const response = await axios.get('http://localhost:8000/api/user/current', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    userStore.setState({ user: response.data });
+                }
+            } catch (error) {
+                console.error("An error occurred while fetching the current user", error);
+            } finally {
                 setLoading(false);
             }
-            console.log(tokenFromCookies);
         };
-        getTokenFromCookies();
+
+        getUserFromServer();
     }, []);
 
     if (loading) {
-        return <p>Загрузка...</p>;
+        return <p>Loading...</p>;
     }
 
-    return (
-        tokenStore.getState().token !== "" ? <Page /> : <Navigate to="/login" />
-    );
+    if (Object.keys(userStore.getState().user).length !== 0) {
+        return <Page />;
+    } else {
+        return <Navigate to="/login" />;
+    }
 };
 
 export default PrivateRouter;

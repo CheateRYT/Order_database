@@ -1,20 +1,25 @@
 import { useState } from "react";
 import axios from "axios";
 import { Order } from "@prisma/client";
+import Cookies from "js-cookie";
 
 const YourOrders = () => {
     const [orders, setOrders] = useState<Order[] | []>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-
+    const token = Cookies.get('token');
     const handleGetMyOrders = async () => {
         setLoading(true);
         try {
-            const response = await axios.get("http://localhost:8000/api/myOrders");
+            const response = await axios.get("http://localhost:8000/api/orders/getMyOrders", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             setOrders(response.data);
             setLoading(false);
         } catch (error) {
-            setError("Произошла ошибка при загрузке ваших заказов");
+            setError("Произошла ошибка при загрузке ваших заказов - " + error);
             setLoading(false);
         }
     };

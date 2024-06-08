@@ -4,7 +4,7 @@ const { auth } = require("./middleware/auth");
 const {executorCheck} = require("./middleware/executorCheck")
 
 const {
-getOrder,
+    getOrder,
     addOrder,
     updateOrder,
     getOrders,
@@ -16,7 +16,8 @@ getOrder,
     getMyOrder,
     getInfoAboutExecutors
 } = require("./controllers/orders");
-
+router.get("/getMyOrders", auth, getMyOrders)
+router.get("/getMyOrder/:orderId", auth, getMyOrder)
 router.get("/info", auth,getInfoAboutExecutors )
 router.get("/notifications/completed", auth, getNotificationsCompleted)
 router.get("/notifications/updates", auth, getNotificationsUpdates)
@@ -26,6 +27,5 @@ router.get("/:id", auth, getOrder);
 router.post("/add", auth, addOrder);
 router.put("/update/:id", auth, executorCheck, updateOrder);
 router.get("/", auth, getOrders);
-router.get("/myOrders", auth, getMyOrders)
-router.get("/myOrder/:id", auth, getMyOrder)
+
 module.exports = router;

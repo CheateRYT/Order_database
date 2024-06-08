@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { Notification } from "@prisma/client";// Assume you have an API function to fetch notifications
 import axios from "axios";
+import Cookies from "js-cookie";
 const Notifications = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const token = Cookies.get('token');
     const handleGetNewNotifications = async () => {
         setLoading(true);
         try {
-            const response = await axios.get("http://localhost:8000/api/orders/notifications/new");
+
+            const response = await axios.get("http://localhost:8000/api/orders/notifications/new", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setNotifications(response.data);
             setLoading(false);
         } catch (error) {
@@ -19,7 +26,11 @@ const Notifications = () => {
     const handleGetCompletedNotifications = async () => {
         setLoading(true);
         try {
-            const response = await axios.get("http://localhost:8000/api/orders/notifications/completed");
+            const response = await axios.get("http://localhost:8000/api/orders/notifications/completed", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setNotifications(response.data);
             setLoading(false);
         } catch (error) {
@@ -30,7 +41,11 @@ const Notifications = () => {
     const handleGetUpdatesNotifications = async () => {
         setLoading(true);
         try {
-            const response = await axios.get("http://localhost:8000/api/orders/notifications/updates");
+            const response = await axios.get("http://localhost:8000/api/orders/notifications/updates", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setNotifications(response.data);
             setLoading(false);
         } catch (error) {
@@ -41,7 +56,11 @@ const Notifications = () => {
     const handleGetAllNotifications = async () => {
         setLoading(true);
         try {
-            const response = await axios.get("http://localhost:8000/api/orders/notifications");
+            const response = await axios.get("http://localhost:8000/api/orders/notifications", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setNotifications(response.data);
             setLoading(false);
         } catch (error) {
@@ -53,12 +72,12 @@ const Notifications = () => {
         <div>
             <h1>Уведомления</h1>
             <button onClick={handleGetAllNotifications}>Посмотреть все уведомления</button>
-            <button onClick={handleGetCompletedNotifications}>Посмотреть уведомления о выполненых заказах</button>
-            <button onClick={handleGetUpdatesNotifications}>Посмотреть уведомления об обновлениях заказов</button>
-            <button onClick={handleGetNewNotifications}>Посмотреть уведомления о новых заказах</button>
+            <button onClick={handleGetCompletedNotifications}>Посмотреть уведомления о ваших выполненых заявках</button>
+            <button onClick={handleGetUpdatesNotifications}>Посмотреть уведомления об обновлениях заявок</button>
+            <button onClick={handleGetNewNotifications}>Посмотреть уведомления о новых заявках</button>
             <div className="Notifications">
                 {loading ? (
-                    <p>Загрузка...</p>
+                    <p>Поиск уведомлений...</p>
                 ) : error ? (
                     <p>{error}</p>
                 ) : (
