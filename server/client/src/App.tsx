@@ -13,7 +13,7 @@ function App() {
   }
 
   const handleMainBtn = () => {
-    navigate("/login");
+    navigate("/main");
   }
 
   return (

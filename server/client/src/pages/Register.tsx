@@ -18,7 +18,8 @@ const Register = () => {
         const password = passwordRef.current!.value;
         const name = nameRef.current!.value;
         const role = roleRef.current!.value;
-
+        if (!login || !password || !name) return alert("Заполните все поля!");
+        if (role === "none") return alert("Выберите роль!");
         try {
             const response = await axios.post('http://localhost:8000/api/user/register', {
                 login,
