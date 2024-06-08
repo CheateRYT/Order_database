@@ -45,7 +45,7 @@ const Login = () => {
             ) : (
                 <button onClick={handleLoginBtn} className="btn btn-primary">Войти</button>
             )}
-            <a onClick={() => navigate("/register")} className="link-danger pointer-event link-offset-2-hover">Нету аккаунта? Авторизироваться</a>
+            <a onClick={() => navigate("/register")} className="link-danger pointer-event link-offset-2-hover">Нету аккаунта? Зарегистрироваться</a>
         </div>
     );
 };

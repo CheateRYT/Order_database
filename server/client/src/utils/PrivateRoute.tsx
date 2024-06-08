@@ -21,7 +21,7 @@ const PrivateRouter = ({ Page }: { Page: React.ComponentType }) => {
     }, []);
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <p>Загрузка...</p>;
     }
 
     return (
