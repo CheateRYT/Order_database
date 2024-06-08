@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { Notification } from "@prisma/client";// Assume you have an API function to fetch notifications
 import axios from "axios";
 const Notifications = () => {
@@ -12,7 +12,7 @@ const Notifications = () => {
             setNotifications(response.data);
             setLoading(false);
         } catch (error) {
-            setError("An error occurred while fetching notifications");
+            setError("Произошла ошибка при получении уведомлений");
             setLoading(false);
         }
     };
@@ -23,11 +23,10 @@ const Notifications = () => {
             setNotifications(response.data);
             setLoading(false);
         } catch (error) {
-            setError("An error occurred while fetching notifications");
+            setError("Произошла ошибка при получении уведомлений");
             setLoading(false);
         }
     };
-
     const handleGetUpdatesNotifications = async () => {
         setLoading(true);
         try {
@@ -35,7 +34,7 @@ const Notifications = () => {
             setNotifications(response.data);
             setLoading(false);
         } catch (error) {
-            setError("An error occurred while fetching notifications");
+            setError("Произошла ошибка при получении уведомлений");
             setLoading(false);
         }
     };
@@ -46,7 +45,7 @@ const Notifications = () => {
             setNotifications(response.data);
             setLoading(false);
         } catch (error) {
-            setError("An error occurred while fetching notifications");
+            setError("Произошла ошибка при получении уведомлений");
             setLoading(false);
         }
     };
@@ -57,9 +56,9 @@ const Notifications = () => {
             <button onClick={handleGetCompletedNotifications}>Посмотреть уведомления о выполненых заказах</button>
             <button onClick={handleGetUpdatesNotifications}>Посмотреть уведомления об обновлениях заказов</button>
             <button onClick={handleGetNewNotifications}>Посмотреть уведомления о новых заказах</button>
-             <div className="Notifications">
+            <div className="Notifications">
                 {loading ? (
-                    <p>Loading...</p>
+                    <p>Загрузка...</p>
                 ) : error ? (
                     <p>{error}</p>
                 ) : (
@@ -79,5 +78,4 @@ const Notifications = () => {
         </div>
     );
 };
-
 export default Notifications;
