@@ -24,6 +24,8 @@ model Order {
   executor           User?          @relation("ExecutorOrders", fields: [executorId], references: [id])
   executorId         Int?
   dateAdded          DateTime
+  dateAccepted       DateTime?
+  dateCompleted      DateTime?
   equipment          String
   faultType          String
   problemDescription String

@@ -179,6 +179,68 @@ const getNotificationsCompleted = async (req, res) => {
     res.status(500).json({ message: "An error occurred while fetching notifications" });
   }
 };
+
+const getInfoAboutExecutors = async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      where: {
+        executorId: {
+          not: null
+        },
+        dateAccepted: {
+          not: null
+        },
+        dateCompleted: {
+          not: null
+        }
+      }
+    });
+
+    const totalOrders = orders.length;
+    let totalExecutionTime = 0;
+
+    orders.forEach(order => {
+      const dateAccepted = new Date(order.dateAccepted);
+      const dateCompleted = new Date(order.dateCompleted);
+      const executionTime = dateCompleted - dateAccepted;
+      totalExecutionTime += executionTime;
+    });
+
+    const averageExecutionTime = totalExecutionTime / totalOrders;
+
+    res.status(200).json({
+      averageExecutionTime,
+      totalCompletedOrders: totalOrders
+    });
+  } catch (error) {
+    res.status(500).json({ message: "An error occurred while fetching executor information" });
+  }
+};
+const getMyOrder = async (req, res) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const order = await prisma.order.findUnique({
+      where: {
+        id: orderId,
+      },
+      include: {
+        client: true,
+      },
+    });
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.client.id !== req.user.id) {
+      return res.status(403).json({ message: "You are not authorized to access this order" });
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    res.status(500).json({ message: "An error occurred while fetching the order" });
+  }
+};
 module.exports = {
   addOrder,
   updateOrder,
@@ -188,5 +250,7 @@ module.exports = {
   getNotifications,
   getNotificationsNew,
   getNotificationsUpdates,
-  getNotificationsCompleted
+  getNotificationsCompleted,
+  getInfoAboutExecutors,
+  getMyOrder
 };
