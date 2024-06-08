@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-const PrivateRouter = ({ Component }: { Component: React.ComponentType }) => {
+const PrivateRouter = ({ Page }: { Page: React.ComponentType }) => {
     const [token, setToken] = useState('');
 
     useEffect(() => {
@@ -12,12 +12,11 @@ const PrivateRouter = ({ Component }: { Component: React.ComponentType }) => {
                 setToken(tokenFromCookies);
             }
         };
-
         getTokenFromCookies();
     }, []);
 
     return (
-        token ? <Component /> : <Navigate to="/login" />
+        token != null ? <Page /> : <Navigate to="/login" />
     );
 };
 

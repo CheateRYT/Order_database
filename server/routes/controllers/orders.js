@@ -31,7 +31,6 @@ const addOrder = async (req, res) => {
     res.status(500).json({ message: "An error occurred while processing your request "+ error });
   }
 };
-
 const updateOrder = async (req, res) => {
   try {
     const orderId = parseInt(req.params.id);
@@ -44,17 +43,19 @@ const updateOrder = async (req, res) => {
         status,
         executorId,
         executorComment,
+        ...(status === "выполнено" ? { dateCompleted: new Date() } : {}),
+        ...(status === "в работе" ? { dateAccepted: new Date() } : {}),
       },
     });
     if (status === "выполнено") {
-        await prisma.notification.create({
-            data: {
-                orderId: order.id,
-                type: "CompletedOrder",
-                message: "Order completed",
-                createdAt: new Date(),
-            },
-        });
+      await prisma.notification.create({
+        data: {
+          orderId: order.id,
+          type: "CompletedOrder",
+          message: "Order completed",
+          createdAt: new Date(),
+        },
+      });
     }
     await prisma.notification.create({
       data: {
