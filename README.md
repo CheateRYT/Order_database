@@ -9,7 +9,7 @@
 - Приватные роуты с использованием JWT для безопасности 
  
 ### Технологии: 
-- Фронтенд: React, Vite, TypeScript, Zustand, js-cookies 
+- Фронтенд: React, Vite, TypeScript, Zustand 
 - Бэкенд: Express.js (Node.js), Prisma ORM, SQLite база данных 
 - Хэширование паролей с использованием Bcrypt 
 
