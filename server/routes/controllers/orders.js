@@ -171,8 +171,8 @@ const getNotificationsNew = async (req, res) => {
   try {
     const notifications = await prisma.notification.findMany(
         {where: {
-                type: "Новая заявка"
-            }}
+            type: "Новая заявка"
+          }}
     )
     res.status(200).json(notifications);
   } catch (error) {

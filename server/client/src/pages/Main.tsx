@@ -140,7 +140,7 @@ const Main = () => {
                     </select>
                 </div>
                 <div>
-                <label>Комментарий исполнителя</label>
+                    <label>Комментарий исполнителя</label>
                     <textarea rows={3} className="form-control" placeholder={"Оставьте пустым если не нужно"}
                               ref={executorCommentRef}></textarea>
                 </div>
