@@ -84,7 +84,9 @@ const Notifications = () => {
                     notifications.map((notification) => (
                         <div key={notification.id} className="card mb-3">
                             <div className="card-body">
+
                                 <h5 className="card-title">{notification.type}</h5>
+                                <h6 className="card-text">ID заявки - {notification.orderId}</h6>
                                 <p className="card-text">{notification.message}</p>
                                 <p className="card-text">
                                     <small className="text-muted">{notification.createdAt.toString()}</small>

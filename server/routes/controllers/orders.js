@@ -37,7 +37,7 @@ const addOrder = async (req, res) => {
     await prisma.notification.create({
       data: {
         orderId: order.id,
-        type: "Новая заявка",
+        type: `Новая заявка ${order.id}`,
         message: `Заявка была создана с полями: Оборудование - ${equipment}, Тип неисправности - ${faultType}, Описание проблемы - ${problemDescription}, ID клиента - ${req.user.id}`,
         createdAt: new Date(),
       },
@@ -90,7 +90,7 @@ const updateOrder = async (req, res) => {
       await prisma.notification.create({
         data: {
           orderId: updatedOrder.id,
-          type: "Выполненная заявка",
+          type: `Выполненная заявка ${updatedOrder.id}`,
           message: `Заявка была отмечена как выполненная в ${date}`,
           createdAt: date,
         },
@@ -101,7 +101,7 @@ const updateOrder = async (req, res) => {
     await prisma.notification.create({
       data: {
         orderId: updatedOrder.id,
-        type: "Обновление заявки",
+        type: `Обновление заявки ${updatedOrder.id}`,
         message: `Заявка обновлена данными: Статус - ${status}. ${executorComment ? "Комментарий исполнителя " + executorComment : ""}`,
         createdAt: new Date(),
       },
