@@ -27,7 +27,7 @@ const YourOrders = () => {
     return (
         <div>
             <h1>Ваши заявки</h1>
-            <button onClick={handleGetMyOrders}>Посмотреть ваши заказы</button>
+            <button onClick={handleGetMyOrders}>Посмотреть ваши заявки</button>
             <div className="Orders">
                 {loading ? (
                     <p>Загрузка...</p>
