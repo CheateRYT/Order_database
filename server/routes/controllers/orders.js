@@ -1,5 +1,21 @@
 const { prisma } = require("../../prisma/prisma-client");
+//Web socket server
+const http = require("http");
+const app = require("../../app");
+const server = http.createServer(app);
+const io = require("socket.io")(server);
 
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
+
+server.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
 const addOrder = async (req, res) => {
   try {
     const { equipment, faultType, problemDescription } = req.body;
@@ -26,6 +42,7 @@ const addOrder = async (req, res) => {
         createdAt: new Date(),
       },
     });
+    io.emit("NewOrder", {message: `Добавлена новая заявка №${order.id}.`});
     res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ message: "An error occurred while processing your request "+ error });
@@ -59,6 +76,7 @@ const addOrder = async (req, res) => {
           createdAt: date,
         },
       });
+      io.emit("CompletedYourOrder", { clientId: req.user.id, message: `Ваша заявка №${order.id}  была выполнена.` });
     }
 
     await prisma.notification.create({
@@ -69,7 +87,7 @@ const addOrder = async (req, res) => {
         createdAt: new Date(),
       },
     });
-
+    io.emit("UpdateYourOrder", { clientId: req.user.id, message: `Вашу заявку №${order.id} обновили.` });
     res.status(200).json(order);
   } catch (error) {
     res.status(500).json({ message: "An error occurred while processing your request" + error });

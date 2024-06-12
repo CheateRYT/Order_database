@@ -19,6 +19,9 @@
     "react-dom": "^18.2.0",
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.23.1",
+    "react-toastify": "^10.0.5",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
