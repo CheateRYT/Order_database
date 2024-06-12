@@ -34,17 +34,19 @@ const Main = () => {
             });
             console.log(response.data);
             alert("Ваша заявка отправлена");
-        } catch (error) {
-            alert("Произошла ошибка, возможно вы не являетесь исполнителем");
+        } catch (error  : any) {
+            if (error.response) {
+                alert(`Ошибка: ${error.response.data.message}`);
+            } else {
+                alert("Произошла ошибка при отправке заявки");
+            }
             console.error(error);
         }
     };
 
-
-
     const handleTakeOrder = async () => {
-    const executorComment = takeOrderExecutorCommentRef.current?.value
-        const updateOrderId = takeOrderIdRef.current!.value
+        const executorComment = takeOrderExecutorCommentRef.current?.value;
+        const updateOrderId = takeOrderIdRef.current!.value;
         try {
             const response = await axios.put(`http://localhost:8000/api/orders/update/${updateOrderId}`, {
                 executorComment,
@@ -56,7 +58,12 @@ const Main = () => {
                 }
             });
             console.log(response.data);
-        } catch (error) {
+        } catch (error  : any) {
+            if (error.response) {
+                alert(`Ошибка: ${error.response.data.message}`);
+            } else {
+                alert("Произошла ошибка при обновлении заявки");
+            }
             console.error(error);
         }
     };
@@ -77,11 +84,15 @@ const Main = () => {
                 }
             });
             console.log(response.data);
-        } catch (error) {
+        } catch (error : any) {
+            if (error.response) {
+                alert(`Ошибка: ${error.response.data.message}`);
+            } else {
+                alert("Произошла ошибка при обновлении заявки");
+            }
             console.error(error);
         }
     };
-
     return (
         <div>
             <Header />
@@ -122,13 +133,14 @@ const Main = () => {
                 <div>
                     <label>Выберите Статус</label>
                     <select className="form-control" ref={statusRef}>
+                        <option value={"без изменений"}>Без изменений</option>
                         <option value={"в работе"}>в работе</option>
                         <option value={"в ожидании"}>в ожидании</option>
                         <option value={"выполнено"}>выполнено</option>
                     </select>
                 </div>
                 <div>
-                    <label>Комментарий исполнителя</label>
+                <label>Комментарий исполнителя</label>
                     <textarea rows={3} className="form-control" placeholder={"Оставьте пустым если не нужно"}
                               ref={executorCommentRef}></textarea>
                 </div>

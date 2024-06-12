@@ -47,14 +47,33 @@ const addOrder = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "An error occurred while processing your request "+ error });
   }
-};const updateOrder = async (req, res) => {
+};
+
+
+
+const updateOrder = async (req, res) => {
   try {
     const orderId = parseInt(req.params.id);
     const { status, executorComment, executorId } = req.body;
-
     const parsedExecutorId = executorId ? parseInt(executorId) : req.user.id;
-    const date = new Date()
-    const order = await prisma.order.update({
+    const date = new Date();
+
+    const order = await prisma.order.findUnique({
+      where: {
+        id: orderId,
+      },
+    });
+    if(order.executorId !== null && order.executorId !== req.user.id) {
+      return res.status(404).json({ message: "Вы не исполнитель этой заявки" });
+    }
+    if (!order) {
+      return res.status(404).json({ message: "Заявка не найдена" });
+    }
+    if (order.status === "выполнено" && status !== "без изменений" && status !== "в работе") {
+      return res.status(400).json({ message: "Заявка уже выполнена до этого" });
+    }
+
+    const updatedOrder = await prisma.order.update({
       where: {
         id: orderId,
       },
@@ -70,29 +89,31 @@ const addOrder = async (req, res) => {
     if (status === "выполнено") {
       await prisma.notification.create({
         data: {
-          orderId: order.id,
+          orderId: updatedOrder.id,
           type: "Выполненная заявка",
           message: `Заявка была отмечена как выполненная в ${date}`,
           createdAt: date,
         },
       });
-      io.emit("CompletedYourOrder", { clientId: req.user.id, message: `Ваша заявка №${order.id}  была выполнена.` });
+      io.emit("CompletedYourOrder", { clientId: req.user.id, message: `Ваша заявка №${updatedOrder.id} была выполнена.` });
     }
 
     await prisma.notification.create({
       data: {
-        orderId: order.id,
+        orderId: updatedOrder.id,
         type: "Обновление заявки",
         message: `Заявка обновлена данными: Статус - ${status}. ${executorComment ? "Комментарий исполнителя " + executorComment : ""}`,
         createdAt: new Date(),
       },
     });
-    io.emit("UpdateYourOrder", { clientId: req.user.id, message: `Вашу заявку №${order.id} обновили.` });
-    res.status(200).json(order);
+    io.emit("UpdateYourOrder", { clientId: req.user.id, message: `Вашу заявку №${updatedOrder.id} обновили.` });
+
+    res.status(200).json(updatedOrder);
   } catch (error) {
     res.status(500).json({ message: "An error occurred while processing your request" + error });
   }
 };
+
 
 const getOrders = async (req, res) => {
   try {
@@ -111,7 +132,7 @@ const getMyOrders = async (req, res) => {
       },
     });
     if (!orders.length) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({ message: "Заявки не найдены" });
     }
     res.status(200).json(orders);
   } catch (error) {
@@ -130,7 +151,7 @@ const getOrder = async (req, res) => {
       },
     });
     if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({ message: "Заявка не найдена" });
     }
     res.status(200).json(order);
   } catch (error) {
